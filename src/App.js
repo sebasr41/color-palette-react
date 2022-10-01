@@ -1,24 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
+import {Routes, Route} from 'react-router-dom'
+import Home from './routes/Home/Home';
+import PaletteDisplay from './routes/Palette/PaletteDisplay';
+import { useEffect, useState } from 'react';
+import { getColorPalettes } from './service';
+import { ColorPalettesContext} from './context/ColorPalettesContext'
+
 
 function App() {
+  const [colorPalettes, setColorPalettes] = useState([]);
+  useEffect(()=> {
+    getColorPalettes()
+    .then((data) => {
+      setColorPalettes(data);
+    })
+    .catch((err) => console.log(err));
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className='App'>
+        <ColorPalettesContext.Provider value={{colorPalettes, setColorPalettes}}>
+          <Routes>
+            <Route path='/' element={<Home/>}/>
+            <Route path='/palette/:id' element={<PaletteDisplay/>}/>
+            
+          </Routes>
+        </ColorPalettesContext.Provider>
+      </div>
   );
 }
 
